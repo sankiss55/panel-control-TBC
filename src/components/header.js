@@ -1,9 +1,9 @@
 import { Settings, User, LogOut } from "lucide-react";
 import { useState } from "react";
-import cerrar_sesion from "../funciones/cerrar_sesion";
+import cerrar_sesiones from "../funciones/cerrar_sesion";
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+const cerrar_sesion = cerrar_sesiones();
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white backdrop-blur">
       <div className="flex h-16 items-center justify-between px-6">

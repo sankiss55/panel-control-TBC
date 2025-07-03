@@ -1,7 +1,13 @@
+
 import { useNavigate } from "react-router-dom";
 
-export default function cerrar_sesion() {
+export default function useCerrarSesion() {
   const navigate = useNavigate();
-  localStorage.removeItem("session");
-  navigate("/login"); 
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("session");
+    navigate("/login");
+  };
+
+  return cerrarSesion;
 }

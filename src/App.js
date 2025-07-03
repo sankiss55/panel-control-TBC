@@ -6,12 +6,14 @@ import SearchProperties from "./components/inventory/SearchProperties";
 import AddUser from './components/users/add_user';
 import Search_users from './components/users/search_users';
 import Layout from "./components/layout";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 export default function App() {
+   const navigate = useNavigate();
   useEffect(()=>{
     const session = localStorage.getItem("session");
     if (!session) {
-      window.location.href = "/login";
+    navigate("/login");
     }
   }, []);
   return (
