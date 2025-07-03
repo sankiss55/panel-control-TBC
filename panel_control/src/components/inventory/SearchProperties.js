@@ -1,32 +1,62 @@
-import { Search, Filter, Eye, Edit, Trash2 } from "lucide-react";
-
+import { Edit, Eye, Filter, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
+import buscar_propuedad from "../../funciones/buscar_propiedades";
+import delete_propiedad from "../../funciones/delete_propiedad";
 export default function SearchProperties() {
-  // Datos de ejemplo
-  const properties = [
-    {
-      id: 1,
-      descripcion: "Bodega Industrial Zona Norte",
-      tipo: "Bodega",
-      ubicacion: "Av. Industrial 123, Zona Norte",
-      tipo_propiedad: "Renta",
-      precio: 25000,
-      tamano_max: 500,
-      tamano_min: 300
-    },
-    {
-      id: 2,
-      descripcion: "Nave Industrial con Oficinas",
-      tipo: "Nave Industrial",
-      ubicacion: "Blvd. Manufacturero 456",
-      tipo_propiedad: "Venta",
-      precio: 2500000,
-      tamano_max: 1200,
-      tamano_min: 1000
+  const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterPropertyType, setFilterPropertyType] = useState("");
+
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        const response = await buscar_propuedad();
+        if (response && Array.isArray(response)) {
+          setProperties(response);
+          setFilteredProperties(response); 
+        } else {
+          console.error("Error en la respuesta de la API:", response);
+        }
+      } catch (error) {
+        console.error("Error al obtener las propiedades:", error);
+      }
     }
-  ];
+    fetchProperties();
+  }, []);
+
+  const handleFilter = () => {
+    const filtered = properties.filter((property) => {
+      const matchesSearchTerm =
+        property.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.ubicacion.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = filterType ? property.tipo === filterType : true;
+      const matchesPropertyType = filterPropertyType
+        ? property.tipo_de_propiedad === filterPropertyType
+        : true;
+
+      return matchesSearchTerm && matchesType && matchesPropertyType;
+    });
+    setFilteredProperties(filtered);
+  };
+
+  const handleDelete = async (id) => {
+    const success = await delete_propiedad(id);
+    if (success) {
+      toast.success("Se ha removido la propiedad");
+      const updatedProperties = properties.filter((property) => property.id_articulo !== id);
+      setProperties(updatedProperties);
+      setFilteredProperties(updatedProperties);
+    } else {
+      toast.error("Hubo un error al remover la propiedad");
+    }
+  };
 
   return (
     <div className="space-y-6">
+      <Toaster />
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Buscar Inmuebles</h1>
         <p className="text-gray-600">Encuentra y gestiona inmuebles del inventario</p>
@@ -43,6 +73,8 @@ export default function SearchProperties() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Descripción, ubicación..."
               />
@@ -53,7 +85,11 @@ export default function SearchProperties() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tipo
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">Todos</option>
               <option value="bodega">Bodega</option>
               <option value="nave_industrial">Nave Industrial</option>
@@ -66,7 +102,11 @@ export default function SearchProperties() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tipo de Propiedad
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select
+              value={filterPropertyType}
+              onChange={(e) => setFilterPropertyType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">Todos</option>
               <option value="venta">Venta</option>
               <option value="renta">Renta</option>
@@ -75,7 +115,10 @@ export default function SearchProperties() {
           </div>
 
           <div className="flex items-end">
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center gap-2">
+            <button
+              onClick={handleFilter}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center gap-2"
+            >
               <Filter className="h-4 w-4" />
               Filtrar
             </button>
@@ -86,7 +129,7 @@ export default function SearchProperties() {
       {/* Resultados */}
       <div className="bg-white rounded-lg border">
         <div className="p-6 border-b">
-          <h2 className="text-lg font-semibold">Resultados ({properties.length})</h2>
+          <h2 className="text-lg font-semibold">Resultados ({filteredProperties.length})</h2>
         </div>
 
         <div className="overflow-x-auto">
@@ -114,29 +157,29 @@ export default function SearchProperties() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {properties.map((property) => (
-                <tr key={property.id} className="hover:bg-gray-50">
+              {filteredProperties.map((property) => (
+                <tr key={property.id_articulo} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
-                        {property.descripcion}
+                        {property.descripcion || "Sin descripción"}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {property.tipo_propiedad}
+                        {property.tipo_de_propiedad || "Sin tipo de propiedad"}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {property.tipo}
+                    {property.tipo || "Sin tipo"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {property.ubicacion}
+                    {property.ubicacion || "Sin ubicación"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    ${property.precio.toLocaleString()}
+                    ${property.precio ? property.precio.toLocaleString() + property.moneda : "Sin precio"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {property.tamano_min} - {property.tamano_max}
+                    {property.tamano || "N/A"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
@@ -146,7 +189,10 @@ export default function SearchProperties() {
                       <button className="p-1 hover:bg-gray-200 rounded">
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="p-1 hover:bg-gray-200 rounded text-red-600">
+                      <button
+                        onClick={() => handleDelete(property.id_articulo)}
+                        className="p-1 hover:bg-gray-200 rounded text-red-600"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

@@ -1,11 +1,16 @@
 import { Eye, EyeOff, Building2 } from "lucide-react";
 import session from "./funciones/session";
 import { useState } from "react";
+import { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 export default function Login() {
-    const [user, setuser]= useState();
-    const [passsword, setpasssword]= useState();
+  
+  const navigate = useNavigate();
+    const [user, setuser]= useState("");
+    const [passsword, setpasssword]= useState("");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+      <Toaster/>
       <div className="w-full max-w-md">
         {/* Card de login */}
         <div className="bg-white rounded-xl shadow-xl p-6 space-y-6">
@@ -16,7 +21,7 @@ export default function Login() {
             </p>
           </div>
 
-          <form onSubmit={(e)=>{session(user, passsword); e.preventDefault(); 
+          <form onSubmit={(e)=>{session(user, passsword, navigate); e.preventDefault(); 
           }} className="space-y-4">
             {/* Usuario */}
             <div className="space-y-1">
@@ -27,6 +32,7 @@ export default function Login() {
                 id="username"
                 name="username"
                 type="text"
+                required
                 value={user}
                 onChange={(e)=>{setuser(e.target.value)}}
                 placeholder="Ingrese su usuario"
@@ -44,6 +50,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   value={passsword}
+                  required
                   onChange={((e)=>{setpasssword(e.target.value)})}
                   type="password"
                   placeholder="Ingrese su contraseña"
@@ -70,11 +77,7 @@ export default function Login() {
         
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-sm text-slate-500">
-          <p>© 2024 Industrial Estate Management System</p>
-         
-        </div>
+        
       </div>
     </div>
   );

@@ -1,16 +1,34 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from "./components/layout"
-import AddProperty from "./components/inventory/AddProperty"
-import SearchProperties from "./components/inventory/SearchProperties"
-import EditProperty from "./components/inventory/EditProperty"
-import RemoveProperty from "./components/inventory/RemoveProperty"
-
+import { Route, Routes } from 'react-router-dom';
+import AddProperty from "./components/inventory/AddProperty";
+import EditProperty from "./components/inventory/EditProperty";
+import RemoveProperty from "./components/inventory/RemoveProperty";
+import SearchProperties from "./components/inventory/SearchProperties";
+import AddUser from './components/users/add_user';
+import Search_users from './components/users/search_users';
+import Layout from "./components/layout";
+import { useEffect } from 'react';
 export default function App() {
+  useEffect(()=>{
+    const session = localStorage.getItem("session");
+    if (!session) {
+      window.location.href = "/login";
+    }
+  }, []);
   return (
-    <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={
+          
+          <Route path="inventory">
+            <Route path="add" element={<AddProperty />} />
+            <Route path="search" element={<SearchProperties />} />
+            <Route path="edit" element={<EditProperty />} />
+          </Route>
+           <Route path="users">
+            <Route path="add_user" element={<AddUser />} />
+            <Route path="search_users" element={<Search_users />} />
+          </Route>
+          <Route path="settings" element={<div><h1 className="text-2xl font-bold">Configuración</h1></div>} />
+          <Route index element={
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
@@ -37,24 +55,7 @@ export default function App() {
               </div>
             </div>
           } />
-          <Route path="/dashboard" element={
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
-                <p className="text-muted-foreground">Gestión de inventario de inmuebles industriales</p>
-              </div>
-            </div>
-          } />
-          <Route path="/inventory/add" element={<AddProperty />} />
-          <Route path="/inventory/search" element={<SearchProperties />} />
-          <Route path="/inventory/edit" element={<EditProperty />} />
-          <Route path="/inventory/remove" element={<RemoveProperty />} />
-          <Route path="/clients" element={<div><h1 className="text-2xl font-bold">Clientes</h1></div>} />
-          <Route path="/contracts" element={<div><h1 className="text-2xl font-bold">Contratos</h1></div>} />
-          <Route path="/reports" element={<div><h1 className="text-2xl font-bold">Reportes</h1></div>} />
-          <Route path="/settings" element={<div><h1 className="text-2xl font-bold">Configuración</h1></div>} />
         </Routes>
       </Layout>
-    </BrowserRouter>
   )
 }
