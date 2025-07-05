@@ -162,7 +162,7 @@ export default function SearchProperties() {
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
-                        {property.descripcion || "Sin descripción"}
+                        {property.nombre || "Sin nombre"}
                       </div>
                       <div className="text-sm text-gray-500">
                         {property.tipo_de_propiedad || "Sin tipo de propiedad"}
@@ -183,12 +183,7 @@ export default function SearchProperties() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
-                      <button className="p-1 hover:bg-gray-200 rounded">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 hover:bg-gray-200 rounded">
-                        <Edit className="h-4 w-4" />
-                      </button>
+                     
                       <button
                         onClick={() => handleDelete(property.id_articulo)}
                         className="p-1 hover:bg-gray-200 rounded text-red-600"

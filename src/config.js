@@ -1,1 +1,1 @@
-export const API_URL = "http://localhost/bo_api";
+export const API_URL = "https://yofibox.com/api_aura/archivos/";

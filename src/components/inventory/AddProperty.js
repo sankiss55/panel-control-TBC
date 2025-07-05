@@ -13,6 +13,7 @@ export default function AddProperty() {
   const [precio, setprecio]=useState("");
   const [moneda, setmoneda]=useState("");
   const [seVendePorM2, setSeVendePorM2] = useState("");
+  const [nombre, setnombre]=useState("");
 
   const handleFileChange = (e) => {
     setImagenes(e.target.files);
@@ -27,6 +28,7 @@ export default function AddProperty() {
     setprecio("");
     setmoneda("");
     setSeVendePorM2("");
+    setnombre("");
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) {
       fileInput.value = ""; 
@@ -36,7 +38,7 @@ export default function AddProperty() {
     e.preventDefault();
 
     try {
-      const success = await uploadImages(imagenes, descripcion, tipo, ubicacion, tipoDePropiedad, tamanoMax, precio, moneda, seVendePorM2); 
+      const success = await uploadImages(imagenes, descripcion, tipo, ubicacion, tipoDePropiedad, tamanoMax, precio, moneda, seVendePorM2, nombre); 
       if (success) {
         toast.success('Inmueble guardado correctamente.');
       } else {
@@ -61,12 +63,25 @@ export default function AddProperty() {
       <div className="bg-white rounded-lg border p-6">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nombre *
+              </label>
+              <input
+              required
+              type="text"
+                value={nombre}
+                onChange={(e) => setnombre(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nombre del inmueble"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Descripción *
               </label>
-              <input
-                type="text"
+              <textarea
+                required
                 value={descripcion}
                 onChange={(e) => setdescripcion(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -79,9 +94,10 @@ export default function AddProperty() {
                 Tipo *
               </label>
               <select  
-              value={tipo}
-              onChange={(e) => settipo(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                required
+                value={tipo}
+                onChange={(e) => settipo(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Seleccionar tipo</option>
                 <option value="bodega">Bodega</option>
                 <option value="nave_industrial">Nave Industrial</option>
@@ -95,6 +111,7 @@ export default function AddProperty() {
                 Ubicación *
               </label>
               <input
+                required
                 type="text"
                 value={ubicacion}
                 onChange={(e) => setubicacion(e.target.value)}
@@ -108,9 +125,10 @@ export default function AddProperty() {
                 Tipo de Propiedad *
               </label>
               <select 
-              value={tipoDePropiedad}
-              onChange={(e) => settipoDePropiedad(e.target.value)}
-               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                required
+                value={tipoDePropiedad}
+                onChange={(e) => settipoDePropiedad(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Seleccionar</option>
                 <option value="venta">Venta</option>
                 <option value="renta">Renta</option>
@@ -123,6 +141,7 @@ export default function AddProperty() {
                 Tamaño (m²)
               </label>
               <input
+                required
                 type="number"
                 value={tamanoMax}
                 onChange={(e) => settamanoMax(e.target.value)}
@@ -138,6 +157,7 @@ export default function AddProperty() {
                 Precio *
               </label>
              <input
+                required
                 type="number"
                 value={precio}
                 onChange={(e) => setprecio(e.target.value)}
@@ -151,22 +171,24 @@ export default function AddProperty() {
                 ¿El producto se vende por m2 ?
               </label>
              <select 
-              value={seVendePorM2}
-              onChange={(e) => setSeVendePorM2(e.target.value)}
-               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                required
+                value={seVendePorM2}
+                onChange={(e) => setSeVendePorM2(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Seleccionar</option>
                 <option value="true">Si </option>
                 <option value="false">No </option>
               </select>
             </div>
-<div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
               Moneda que se usara para el precio *
               </label>
             <select 
-              value={moneda}
-              onChange={(e) => setmoneda(e.target.value)}
-               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                required
+                value={moneda}
+                onChange={(e) => setmoneda(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Seleccionar</option>
                 <option value="MX">Mexicana (MX)</option>
                 <option value="US">Estadounidense (US) </option>
@@ -178,6 +200,7 @@ export default function AddProperty() {
                 Imágenes *
               </label>
               <input
+                required
                 type="file"
                 multiple
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
